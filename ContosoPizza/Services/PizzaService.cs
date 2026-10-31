@@ -5,13 +5,14 @@ namespace ContosoPizza.Services;
 public static class PizzaService
 {
     static List<Pizza> Pizzas { get; }
-    static int nextId = 3;
+    static int nextId = 4;
     static PizzaService()
     {
         Pizzas = new List<Pizza>
         {
             new Pizza { Id = 1, Name = "Classic Italian", IsGlutenFree = false },
-            new Pizza { Id = 2, Name = "Veggie", IsGlutenFree = true }
+            new Pizza { Id = 2, Name = "Veggie", IsGlutenFree = true },
+            new Pizza { Id = 3, Name = "Pepperoni", IsGlutenFree = false }
         };
     }
 
@@ -28,7 +29,7 @@ public static class PizzaService
     public static void Delete(int id)
     {
         var pizza = Get(id);
-        if(pizza is null)
+        if (pizza is null)
             return;
 
         Pizzas.Remove(pizza);
@@ -37,7 +38,7 @@ public static class PizzaService
     public static void Update(Pizza pizza)
     {
         var index = Pizzas.FindIndex(p => p.Id == pizza.Id);
-        if(index == -1)
+        if (index == -1)
             return;
 
         Pizzas[index] = pizza;

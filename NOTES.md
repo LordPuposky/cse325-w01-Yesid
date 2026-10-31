@@ -2,20 +2,183 @@
 
 Student: Yesid Augusto Romero Ruiz
 
+Environment: .NET 8 SDK (8.0.427). Both projects target `net8.0`.
+
 ## 1. Pizzas evidence (Create a web API with ASP.NET Core controllers)
 
-_Pending: complete after module 6._
+The module's seed data in `Services/PizzaService.cs` has two pizzas: `Classic Italian` (id 1) and `Veggie` (id 2). I added a third one, `Pepperoni` (id 3), and changed `nextId` from `3` to `4` so that the next pizza created through POST does not get a duplicated id.
+
+```csharp
+static int nextId = 4;
+static PizzaService()
+{
+    Pizzas = new List<Pizza>
+    {
+        new Pizza { Id = 1, Name = "Classic Italian", IsGlutenFree = false },
+        new Pizza { Id = 2, Name = "Veggie", IsGlutenFree = true },
+        new Pizza { Id = 3, Name = "Pepperoni", IsGlutenFree = false }
+    };
+}
+```
+
+Request (API freshly started, before any other change):
+
+```http
+GET http://localhost:5147/pizza/
+Accept: application/json
+```
+
+Response (200 OK), showing the two existing pizzas and the additional one:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Classic Italian",
+    "isGlutenFree": false
+  },
+  {
+    "id": 2,
+    "name": "Veggie",
+    "isGlutenFree": true
+  },
+  {
+    "id": 3,
+    "name": "Pepperoni",
+    "isGlutenFree": false
+  }
+]
+```
 
 ## 2. API operations: request, response and status code
 
-_Pending: complete after module 6._
+All requests were sent from `ContosoPizza.http` in Visual Studio Code with the API running at `http://localhost:5147`, started from scratch so the first created pizza gets id 4.
 
-| Operation | Request | Response | Status code |
-|-----------|---------|----------|-------------|
-| GET       |         |          |             |
-| POST      |         |          |             |
-| PUT       |         |          |             |
-| DELETE    |         |          |             |
+### POST: create a pizza (201 Created)
+
+Request:
+
+```http
+POST http://localhost:5147/pizza/
+Content-Type: application/json
+
+{
+    "name": "Hawaii",
+    "isGlutenFree": false
+}
+```
+
+Response:
+
+```http
+HTTP/1.1 201 Created
+Connection: close
+Content-Type: application/json; charset=utf-8
+Date: Sat, 31 Oct 2026 20:41:45 GMT
+Server: Kestrel
+Location: http://localhost:5147/Pizza/4
+Transfer-Encoding: chunked
+
+{
+  "id": 4,
+  "name": "Hawaii",
+  "isGlutenFree": false
+}
+```
+
+Status code: **201 Created**
+
+### PUT: update a pizza (204 No Content)
+
+Request:
+
+```http
+PUT http://localhost:5147/pizza/4
+Content-Type: application/json
+
+{
+    "id": 4,
+    "name": "Hawaiian",
+    "isGlutenFree": false
+}
+```
+
+Response:
+
+```http
+HTTP/1.1 204 No Content
+Connection: close
+Date: Sat, 31 Oct 2026 20:42:02 GMT
+Server: Kestrel
+```
+
+Status code: **204 No Content**
+
+### GET: read the updated pizza (200 OK)
+
+Request:
+
+```http
+GET http://localhost:5147/pizza/4
+Accept: application/json
+```
+
+Response:
+
+```http
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: application/json; charset=utf-8
+Date: Sat, 31 Oct 2026 20:42:17 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{
+  "id": 4,
+  "name": "Hawaiian",
+  "isGlutenFree": false
+}
+```
+
+Status code: **200 OK**
+
+### DELETE: remove a pizza (204 No Content)
+
+Request:
+
+```http
+DELETE http://localhost:5147/pizza/4
+```
+
+Response:
+
+```http
+HTTP/1.1 204 No Content
+Connection: close
+Date: Sat, 31 Oct 2026 20:42:32 GMT
+Server: Kestrel
+```
+
+Status code: **204 No Content**
+
+### Verification after DELETE (200 OK)
+
+Request:
+
+```http
+GET http://localhost:5147/pizza/
+Accept: application/json
+```
+
+Response: `HTTP/1.1 200 OK` (Date: Sat, 31 Oct 2026 20:42:46 GMT). The list contains only the three original pizzas, so pizza 4 was removed:
+
+```json
+[
+  { "id": 1, "name": "Classic Italian", "isGlutenFree": false },
+  { "id": 2, "name": "Veggie", "isGlutenFree": true },
+  { "id": 3, "name": "Pepperoni", "isGlutenFree": false }
+]
+```
 
 ## 3. Sales summary function (Work with files and directories in a .NET app)
 
